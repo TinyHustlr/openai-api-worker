@@ -8,11 +8,11 @@ const corsHeaders = {
 
 export default {
 	async fetch(request, env, ctx) {
-		if (request.method === 'OPTIONS') {
+		if (request.method === "OPTIONS") {
 			return new Response(null, {headers: corsHeaders});
 		}
 
-		if (request.method !== POST) {
+		if (request.method !== "POST") {
 			return new Response(JSON.stringify({ errror: `${request.method} method is not allowed`}), { status: 405, headers: corsHeaders })
 		}
 
