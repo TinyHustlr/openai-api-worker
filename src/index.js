@@ -17,16 +17,32 @@ export default {
 		}
 
 		const openai = new OpenAI({
-			apiKey: env.OPENAI_API_KEY,
-			baseURL: "https://gateway.ai.cloudflare.com/v1/c638b79f5291ad3033b57af0c47d3820/stock-predictions/openai"
+			apiKey: env.OPENAI_API_KEY
 		})
 		try {
-			const messages = await request.json()
+			const userMessage = await request.json()
 			const chatCompletion = await openai.chat.completions.create({
 				model: "gpt-4",
-				messages: messages
+				messages: [{
+					role: 'system',
+					content: 'You are Braze customer engagment platform email expert'
+				},
+				{
+					role: 'user',
+					content: `Write me email copy for the video editing platform Clipchamp presuading me to try it. It needs to be in the following format:
+					
+					Heading: 10 words of less
+					Body copy: 60 words or less
+					CTA: 5 words or less
+					
+					The copy should be upbeat, engaging and aimed at novice information workers. It should also include specific references to Clipchamp features to avoid sounding generic.
+					Do not include introductions such as "hello there"`
+				}]
 			})
-			const response = chatCompletion.choices[0].message
+			const data = chatCompletion.choices[0].message
+			const emailToSplit = data.content
+        	const response = emailToSplit.split(/: |\n/)
+
 			return new Response(JSON.stringify(response), { headers: corsHeaders})
 		} catch (err) {
 			return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: corsHeaders})
